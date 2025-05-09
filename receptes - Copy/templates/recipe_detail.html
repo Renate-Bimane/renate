@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card mb-4">
+        {% if recipe.image_path %}
+        <img src="{{ url_for('static', filename=recipe.image_path) }}" 
+             class="card-img-top img-fluid rounded" 
+             style="max-height: 400px; object-fit: cover;" 
+             alt="{{ recipe.title }}">
+        {% endif %}
+
+        <div class="card-body">
+            <h1 class="card-title">{{ recipe.title }}</h1>
+
+            <div class="recipe-meta mb-4">
+                <span class="badge bg-primary">
+                    <i class="fas fa-clock"></i> {{ recipe.duration }} minūtes
+                </span>
+                <span class="badge bg-secondary ms-2">
+                    Grūtības pakāpe: {{ recipe.difficulty }}
+                </span>
+            </div>
+
+            <h3>Apraksts</h3>
+            <p class="card-text">{{ recipe.description }}</p>
+
+            <h3>Pagatavošanas instrukcijas</h3>
+            <ol class="mb-4">
+                {% for instruction in recipe.instructions.split('\n') %}
+                {% if instruction.strip() %}
+                <li>{{ instruction }}</li>
+                {% endif %}
+                {% endfor %}
+            </ol>
+
+            <h3>Sastāvdaļas</h3>
+            <ul class="list-group mb-4">
+                {% for ingredient in ingredients %}
+                <li class="list-group-item">{{ ingredient.sastavdalas }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Comment Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h3>Pievienot komentāru</h3>
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label">Jūsu vārds:</label>
+                    <input type="text" name="author" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Komentārs:</label>
+                    <textarea name="comment" class="form-control" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Publicēt</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Comments Section -->
+    <div class="card">
+        <div class="card-body">
+            <h3>Komentāri</h3>
+            {% if comments %}
+                {% for comment in comments %}
+                <div class="mb-3 p-3 bg-light rounded position-relative">
+                    <strong>{{ comment.author }}</strong>
+                    <small class="text-muted">{{ comment.created_at }}</small>
+                    <p class="mb-0">{{ comment.comment }}</p>
+
+                    <!-- Edit/Delete buttons -->
+                    <div class="position-absolute top-0 end-0 mt-2 me-2">
+                        <a href="{{ url_for('edit_comment', recipe_id=recipe.rec_id, comment_id=comment.id) }}" 
+                           class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <form method="POST" 
+                              action="{{ url_for('delete_comment', recipe_id=recipe.rec_id, comment_id=comment.id) }}"
+                              class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                                    onclick="return confirm('Vai tiešām vēlaties dzēst šo komentāru?')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>Vēl nav komentāru. Esi pirmais!</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

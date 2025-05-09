@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card">
+        <div class="card-body">
+            <h3>Rediģēt komentāru</h3>
+            <form method="POST">
+                <div class="mb-3">
+                    <textarea name="comment" class="form-control" rows="5" required>{{ comment.comment }}</textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Saglabāt</button>
+                <a href="{{ url_for('recipe_detail', recipe_id=recipe_id) }}" class="btn btn-secondary">Atcelt</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
